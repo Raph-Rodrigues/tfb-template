@@ -1,0 +1,19 @@
+# Quadros gerados por tools/extrair-quadros.sh
+videos/*-quadros/
+
+# Python
+__pycache__/
+
+# LaTeX
+*.aux
+*.log
+*.nav
+*.snm
+*.out
+*.toc
+*.vrb
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.synctex(busy)
+main.pdf
