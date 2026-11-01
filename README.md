@@ -1,26 +1,82 @@
-# Template de Apresentação — Física (Beamer + LuaLaTeX)
+# Template de TFB em Física — ABNT + LuaLaTeX
 
 ![Prévia do template](preview.png)
 
-Template de slides 16:9 para o **Bacharelado em Física**, com visual escuro
-("lousa quântica"), tipografia Fira e integração real entre **LaTeX** e **Lua**.
-Os slides são escritos em Beamer; os módulos Lua cuidam de constantes físicas,
-tabelas, listas de exercícios e da leitura de dados CSV para gerar gráficos
-`pgfplots`.
+Modelo de Trabalho Final de Bacharelado em Física baseado em `abntex2`, com
+automação em Lua para dados, tabelas e gráficos. A apresentação Beamer 16:9
+original continua disponível em um arquivo de entrada separado.
 
-O conteúdo de exemplo é uma apresentação curta sobre o **oscilador harmônico
-quântico** — troque o texto e mantenha a estrutura.
+O documento principal é [`main.tex`](main.tex). Os capítulos ficam em
+`capitulos/`, os materiais físicos reutilizáveis ficam em `content/`, os
+módulos e dados automatizados ficam em `lua/` e `dados/`, e as referências
+ficam em [`referencias.bib`](referencias.bib).
+
+## Compilar
+
+Compile a partir da raiz do projeto:
+
+```bash
+make
+# ou
+latexmk -lualatex main.tex
+```
+
+O TFB é gerado em `main.pdf`. Para também compilar a apresentação original:
+
+```bash
+make slides
+# ou
+latexmk -lualatex main-slides.tex
+```
+
+O PDF dos slides sai em `main-slides.pdf`. O alvo `make tfb` continua disponível
+como atalho para gerar `main.pdf`. Para limpar os arquivos auxiliares:
+
+```bash
+make clean
+```
+
+O modelo acadêmico usa papel A4, fonte de 12 pt, margens da classe `abntex2`
+e espaçamento de 1,5. Inclui capa, folha de rosto e aprovação, resumos,
+listas, sumário, capítulos, referências numéricas e apêndice de exemplo.
+Seções do conteúdo de slides foram adaptadas e incluídas nos capítulos do TFB;
+os mesmos fragmentos continuam usados pela apresentação.
+
+Use como referência as normas ABNT aplicáveis a trabalhos acadêmicos
+(NBR 14724), citações (NBR 10520), referências (NBR 6023), numeração
+progressiva (NBR 6024), sumário (NBR 6027) e resumo (NBR 6028), sempre na
+edição vigente.
+
+O `abntex2` automatiza a estrutura acadêmica e a formatação convencional,
+mas não substitui a conferência das edições atuais das normas: a versão da
+classe disponível na distribuição TeX pode anteceder revisões recentes.
+Antes de entregar, confirme com o curso a edição vigente das normas ABNT e o
+manual institucional. A ficha catalográfica, quando exigida, deve ser
+fornecida pela biblioteca; não use os dados fictícios nem os textos de exemplo
+como versão final do trabalho.
+
+---
+
+## Apresentação Beamer
+
+O arquivo [`main-slides.tex`](main-slides.tex) mantém os slides originais do
+Bacharelado em Física, com visual escuro ("lousa quântica"), tipografia Fira e
+integração real entre **LaTeX** e **Lua**. O conteúdo de exemplo é sobre o
+oscilador harmônico quântico.
+
+Para compilar a apresentação, use `make slides`. Os demais exemplos de slides
+permanecem em `content/` e a automação Lua é compartilhada com o TFB.
 
 ---
 
 ## Requisitos
 
-- **TeX Live 2025+** (testado com TeX Live 2026) com:
-  `lualatex`, `latexmk`, `beamer`, `pgfplots`, `tcolorbox`, `siunitx`,
+- TeX Live com `lualatex`, `latexmk`, `abntex2`, `abntex2cite`,
+  `babel-portuges`, `beamer`, `pgfplots`, `tcolorbox`, `siunitx`,
   `fontspec`, `unicode-math`, `listings`, `media9` e `animate`.
 - **ffmpeg** (opcional): só para gerar o vídeo de demonstração ou extrair
   quadros para `\videoquadros`.
-- Fontes **Fira Sans**, **Fira Math** e **Fira Mono** (já vêm no TeX Live).
+- Fontes **Fira Sans**, **Fira Math** e **Fira Mono** para a apresentação.
 - **Lua 5.3+** apenas para regenerar os dados; a compilação usa o Lua embutido
   no LuaTeX.
 
@@ -32,78 +88,30 @@ sudo pacman -S texlive-basic texlive-latexextra texlive-fontsextra lua
 
 ---
 
-## Compilar
-
-Sempre compile **a partir da raiz do projeto** (o Lua procura `./lua` e
-`./dados`):
-
-```bash
-make
-# ou
-latexmk -lualatex main.tex
-```
-
-O PDF sai em `main.pdf`. Para limpar os arquivos auxiliares:
-
-```bash
-make clean
-```
-
-> Use **LuaLaTeX**, não pdfLaTeX: o template depende de `fontspec`,
-> `unicode-math` e dos módulos Lua. O `main.tex` começa com
-> `% !TeX program = lualatex`, então editores que respeitam essa diretiva
-> (TeXstudio, TeXmaker, Kile etc.) já escolhem o motor correto.
-
-Se estiver usando um editor, selecione o compilador **LuaLaTeX**:
-
-- **TeXstudio/TeXmaker:** *Opções → Configurar TeXstudio → Compilação* →
-  compilador padrão `LuaLaTeX`; ou use o botão de compilação LuaLaTeX.
-- **VS Code + LaTeX Workshop:** escolha a receita `LuaLaTeX`
-  (`latexmk (lualatex)`) ou defina `latex-workshop.latex.recipe.default`.
-- **Overleaf:** *Menu → Compiler → LuaLaTeX*.
-
----
-
 ## Estrutura
 
 ```text
 .
-├── main.tex                  # metadados, seções e \input dos slides
-├── beamerthemefisica.sty     # tema: cores, fontes, blocos, capa, rodapé
-├── fisica.sty                # macros de física + interface LaTeX → Lua
-├── fisica-video.sty          # vídeos locais: \videolocal, \videolink, \videoquadros
-├── content/                  # um arquivo .tex por assunto
-│   ├── 01-motivacao.tex
-│   ├── ...
-│   ├── 13-obrigado.tex
-│   └── 14-video.tex          # slide de demonstração de vídeo
-├── videos/
-│   ├── demo-oscilador.mp4    # vídeo de exemplo (5 s, H.264)
-│   └── demo-oscilador.png    # capa/poster do vídeo
-├── tools/
-│   ├── gerar-video-demo.py   # recria o vídeo de exemplo
-│   └── extrair-quadros.sh    # converte vídeo em quadros para \videoquadros
-├── lua/
-│   ├── instalar.lua          # registra o buscador de módulos em ./lua
-│   ├── constantes.lua        # constantes CODATA 2022
-│   ├── conteudo.lua          # roteiro, comparação, níveis, exercícios
-│   └── fisica.lua            # funções que escrevem LaTeX via tex.sprint
-├── dados/
-│   └── oscilador.csv         # x, V(x), psi0, psi1, psi2
-├── scripts/
-│   └── gerar_dados.lua       # recalcula o CSV
-├── preview.png               # imagem de prévia
-├── .latexmkrc                # força LuaLaTeX no latexmk
+├── main.tex                  # entrada ABNT do TFB
+├── main-slides.tex           # entrada da apresentação Beamer
+├── capitulos/                # capítulos do TFB
+├── content/                  # fragmentos compartilhados de Física
+├── referencias.bib           # referências bibliográficas
+├── fisica.sty                # macros e interface LaTeX → Lua
+├── beamerthemefisica.sty     # tema visual dos slides
+├── fisica-video.sty          # recursos de vídeo para os slides
+├── lua/                      # constantes, tabelas e gráficos
+├── dados/oscilador.csv       # dados usados pelo gráfico
+├── scripts/gerar_dados.lua   # gera o CSV do oscilador
+├── videos/                   # demonstração e imagem do oscilador
+├── tools/                    # ferramentas auxiliares de mídia
+├── .latexmkrc                # configura LuaLaTeX
 └── Makefile
 ```
 
----
+## Apresentação: personalização
 
-## Personalizar
-
-### Metadados e seções
-
-Edite o preâmbulo de `main.tex`:
+Edite os metadados de slides no preâmbulo de `main-slides.tex`:
 
 ```latex
 \title[Oscilador quântico]{O oscilador harmônico quântico}
@@ -113,17 +121,18 @@ Edite o preâmbulo de `main.tex`:
 \institute[UFXX]{Universidade Federal de Exemplo\\
   Bacharelado em Física}
 \date{\today}
-\fisicaeyebrow{FÍSICA \textperiodcentered{} BACHARELADO}
 ```
 
 Cada `\section{...}` cria automaticamente uma página de seção. Os slides ficam
-em `content/` e são incluídos com `\input`:
+em `content/` e são incluídos em `main-slides.tex`.
 
-```latex
-\section{Motivação}
-\input{content/01-motivacao}
-\input{content/02-classico-quantico}
-```
+---
+
+## Documentação detalhada dos slides
+
+As instruções de cores, tipografia, vídeos, módulos Lua e gráficos que seguem
+aplicam-se à apresentação Beamer; os módulos Lua e os dados também são usados
+no TFB.
 
 ### Numeração dos slides
 
@@ -403,17 +412,17 @@ compile com `latexmk -lualatex` a partir da raiz.
 Rode `make dados` (ou `lua scripts/gerar_dados.lua`).
 
 **`Fatal Package fontspec Error: ... requires XeTeX or LuaTeX`**
-Você compilou com pdfLaTeX. Use LuaLaTeX:
+Você compilou a apresentação com pdfLaTeX. Use LuaLaTeX:
 
 ```bash
-make
+make slides
 # ou
-latexmk -lualatex main.tex
+latexmk -lualatex main-slides.tex
 ```
 
 No editor, selecione o motor LuaLaTeX (veja a seção [Compilar](#compilar)).
-O template também interrompe cedo, com uma mensagem explícita, se detectar
-pdfLaTeX.
+O arquivo `main.tex` também precisa ser compilado com LuaLaTeX para executar
+as rotinas de dados e gráficos embutidas.
 
 **`Package Listings Error: Couldn't load requested language`**
 O `listings` define os dialetos Lua **5.0–5.3**. Use `language={[5.3]Lua}` no
@@ -436,15 +445,22 @@ Instale o pacote de fontes do TeX Live (`texlive-fontsextra` no Arch). Se
 preferir outras fontes, troque as chamadas `\setsansfont`, `\setmonofont` e
 `\setmathfont` em `beamerthemefisica.sty`.
 
-**Erro do `babel` em TeX Live antigo**
-O template usa a API nova:
+**Erro do `babel`: opção `brazil` desconhecida**
+
+O ABNTeX2 solicita a opção legada `brazil`. Nas versões recentes do Babel,
+essa definição é fornecida pelo pacote adicional `babel-portuges`, que pode
+não estar instalado por padrão. Instale o pacote de idiomas português do TeX
+Live (no Arch Linux, `texlive-langportuguese`) e compile novamente. Não troque
+`brazil` por `brazilian` no preâmbulo: a opção é solicitada internamente pela
+classe ABNTeX2.
 
 ```latex
 \usepackage{babel}
 \babelprovide[import,main]{brazilian}
 ```
 
-Em versões mais antigas do `babel`, troque por:
+Se estiver usando uma versão antiga do Babel que não reconhece
+`\babelprovide`, substitua o trecho acima por:
 
 ```latex
 \usepackage[brazilian]{babel}
@@ -453,6 +469,7 @@ Em versões mais antigas do `babel`, troque por:
 **Overleaf**
 Envie a pasta inteira (incluindo `lua/` e `dados/`), escolha
 *Menu → Compiler → LuaLaTeX* e mantenha `main.tex` como documento principal.
+Para compilar a apresentação, selecione `main-slides.tex` como documento raiz.
 
 ---
 

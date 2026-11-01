@@ -1,0 +1,44 @@
+\chapter{Resultados e discussão}
+\label{cap:resultados}
+
+Apresente os resultados de forma organizada e discuta sua relação com os
+objetivos e com a literatura. Não substitua a análise por uma sequência de
+figuras ou tabelas: explique o que cada resultado mostra e quais são suas
+limitações.
+
+\section{Espectro de energia}
+
+Para o oscilador harmônico quântico, os níveis de energia são
+\begin{equation}
+  E_n = \hbar\omega\left(n+\frac{1}{2}\right),
+  \qquad n=0,1,2,\ldots.
+  \label{eq:energia}
+\end{equation}
+Em particular, o estado fundamental possui energia não nula,
+\(E_0=\hbar\omega/2\).
+
+\begin{table}[htbp]
+  \centering
+  \caption{Primeiros níveis de energia do oscilador harmônico}
+  \label{tab:niveis}
+  \begin{tabular}{cccc}
+    \toprule
+    \(n\) & \(E_n\) & Paridade & Nós \\
+    \midrule
+    \niveisTabela
+    \bottomrule
+  \end{tabular}
+  \fonte{Elaboração própria; dados calculados em \texttt{lua/conteudo.lua}
+  para \(\hbar\omega=\qty{250}{\milli\electronvolt}\).}
+\end{table}
+
+\input{content/05-funcoes-onda}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.8\textwidth]{videos/demo-oscilador.png}
+  \caption{Visualização de uma superposição de estados do oscilador
+  harmônico quântico}
+  \label{fig:exemplo}
+  \fonte{Material de demonstração incluído no repositório.}
+\end{figure}

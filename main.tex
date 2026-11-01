@@ -1,91 +1,242 @@
-% !TeX program = xelatex
-% =====================================================================
-%  main.tex
-%  Template de apresentacao para o Bacharelado em Fisica
-%  Beamer + XeLaTeX/LuaLaTeX + modulos Lua (pasta ./lua)
-%
-%  Compile com:  latexmk -xelatex main.tex   (funciona no UaiTeX)
-%                latexmk -lualatex main.tex (usa os modulos Lua)
-%  ou:           make
-% =====================================================================
-\RequirePackage{iftex}
-\ifPDFTeX
-  \errmessage{%
-    Este template exige XeLaTeX ou LuaLaTeX (fontspec, unicode-math).
-    Use: latexmk -xelatex main.tex  ou  make}%
-  \expandafter\endinput
-\fi
-
-\documentclass[aspectratio=169,10pt]{beamer}
+% !TeX program = lualatex
+% Modelo de Trabalho Final de Bacharelado em Física.
+% Compile da raiz do projeto com: make
+\documentclass[
+  12pt,
+  a4paper,
+  oneside,
+  openany
+]{abntex2}
 
 \usepackage{babel}
 \babelprovide[import,main]{brazilian}
-\usetheme{fisica}
+
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb,mathtools}
+\usepackage{siunitx}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\usepackage[breakable]{tcolorbox}
+\usepackage{listings}
+\usepackage{abntex2cite}
+\usepackage{hyperref}
 \usepackage{fisica}
-\usepackage{fisica-video}
 
-% ---------------------------------------------------------------------
-%  Metadados (edite esta parte)
-% ---------------------------------------------------------------------
-\title[Oscilador quântico]{O oscilador harmônico quântico}
-\subtitle{Da energia de ponto zero aos qubits}
+\addto\captionsbrazilian{%
+  \renewcommand{\bibname}{Referências}%
+  \renewcommand{\listfigurename}{Lista de ilustrações}%
+  \renewcommand{\listtablename}{Lista de tabelas}%
+}
 
-\author[Seu Nome]{\texorpdfstring{Seu Nome\\[2pt]
-  {\small Orientador: Prof.\ Dr.\ Fulano de Tal}}{Seu Nome}}
-\institute[UFXX]{Universidade Federal de Exemplo\\
-  Bacharelado em Física}
-\date{\today}
+\hypersetup{
+  colorlinks=false,
+  pdfborder={0 0 0},
+  pdftitle={Título do Trabalho Final de Bacharelado},
+  pdfauthor={Nome completo do autor},
+  pdfsubject={Trabalho Final de Bacharelado em Física}
+}
 
-\fisicaeyebrow{FÍSICA \textperiodcentered{} BACHARELADO \textperiodcentered{} SEMINÁRIO}
+\setlength{\parindent}{1.25cm}
+\setlength{\parskip}{0pt}
+\OnehalfSpacing
 
-% =====================================================================
-\begin{document}
+% Cores e ambientes compatíveis com os fragmentos reaproveitados de content/.
+\definecolor{fisicabg}{HTML}{0A1020}
+\definecolor{fisicacard}{HTML}{131F38}
+\definecolor{fisicamuted}{HTML}{8EA3C0}
+\definecolor{fisicacyan}{HTML}{5BD8E8}
+\definecolor{fisicaviolet}{HTML}{B49CFF}
+\definecolor{fisicaamber}{HTML}{FFC46B}
+\definecolor{fisicagreen}{HTML}{7BE0A8}
+\definecolor{fisicafg}{HTML}{E7EEF8}
 
-% ---------------------------------------------------------------------
-%  Abertura
-% ---------------------------------------------------------------------
-\frame[plain]{\titlepage}
+\makeatletter
+\def\frame{\@ifnextchar[{\fisica@frame@opcional}{\fisica@frame@titulo}}
+\def\fisica@frame@opcional[#1]#2{\fisica@frame@titulo{#2}}
+\def\fisica@frame@titulo#1{\par\subsection{#1}\begingroup\normalsize}
+\def\endframe{\endgroup\par}
+\makeatother
+\newenvironment{columns}[1][]{\par\noindent}{\par}
+\newenvironment{column}[1]{%
+  \hfill\begin{minipage}[t]{#1}\vspace{0pt}
+}{\end{minipage}}
+\newcommand{\framesubtitle}[1]{\par\smallskip\textit{#1}\par}
+\providecommand{\alert}[1]{\textbf{#1}}
 
-\begin{frame}{Roteiro}
-  \begin{enumerate}
-    \roteiro
-  \end{enumerate}
-\end{frame}
-
-% Paginas de secao automaticas
-\AtBeginSection[]{%
-  \begin{frame}[plain]
-    \sectionpage
-  \end{frame}%
+\newtcolorbox{destaque}[2][fisicacyan]{%
+  colback=white,
+  colframe=#1,
+  coltitle=black,
+  title={#2},
+  fonttitle=\bfseries,
+  breakable
+}
+\newtcolorbox{equacao}{%
+  colback=white,
+  colframe=fisicaviolet,
+  breakable
+}
+\lstdefinestyle{lua}{%
+  language={[5.3]Lua},
+  basicstyle=\ttfamily\small,
+  breaklines=true,
+  showstringspaces=false
 }
 
 % ---------------------------------------------------------------------
-%  Conteudo
+% Dados do trabalho: substitua todos os campos antes da entrega.
 % ---------------------------------------------------------------------
-\section{Motivação}
-\input{content/01-motivacao}
-\input{content/02-classico-quantico}
+\autor{NOME COMPLETO DO(A) AUTOR(A)}
+\titulo{TÍTULO DO TRABALHO: subtítulo, se houver}
+\local{CIDADE}
+\data{ANO}
+\orientador{Prof. Dr. Nome Completo do Orientador}
+% \coorientador{Prof. Dr. Nome Completo do Coorientador}
+\instituicao{%
+  UNIVERSIDADE\\
+  Instituto ou departamento\\
+  Bacharelado em Física
+}
+\tipotrabalho{Trabalho de Conclusão de Curso}
+\preambulo{%
+  Trabalho de Conclusão de Curso apresentado ao Bacharelado em Física da
+  UNIVERSIDADE, como requisito parcial para a obtenção do título de Bacharel
+  em Física.
+}
 
-\section{Formulação quântica}
-\input{content/03-schrodinger}
-\input{content/04-niveis}
+\begin{document}
 
-\section{Espectro e funções de onda}
-\input{content/05-funcoes-onda}
-\input{content/06-tabela-niveis}
-\input{content/07-aplicacoes}
+\renewcommand{\bibname}{Referências}
+\hypersetup{pageanchor=false}
+\pretextual
+\imprimircapa
+\imprimirfolhaderosto*
 
-\section{Aplicações e ferramentas}
-\input{content/08-constantes}
-\input{content/09-lua}
-\input{content/10-exercicios}
-\input{content/11-resumo}
-\input{content/14-video}
-\input{content/12-referencias}
+% A biblioteca da instituição normalmente fornece a ficha catalográfica.
+% Insira-a no verso da folha de rosto conforme as orientações locais.
 
-% ---------------------------------------------------------------------
-%  Encerramento
-% ---------------------------------------------------------------------
-\input{content/13-obrigado}
+\begin{folhadeaprovacao}
+  \begin{center}
+    \ABNTEXchapterfont\large\imprimirautor
+
+    \vspace*{\fill}
+    \begin{minipage}{0.8\textwidth}
+      \begin{center}
+        \ABNTEXchapterfont\bfseries\imprimirtitulo
+      \end{center}
+      \imprimirpreambulo
+    \end{minipage}
+    \vspace*{\fill}
+
+    Aprovado em: \rule{2.5cm}{0.4pt}/\rule{2.5cm}{0.4pt}/\rule{2.5cm}{0.4pt}
+  \end{center}
+
+  \vspace*{\fill}
+  \assinatura{\textbf{\imprimirorientador}\\Orientador(a)\\UNIVERSIDADE}
+  \assinatura{\textbf{Nome do(a) avaliador(a) 1}\\UNIVERSIDADE}
+  \assinatura{\textbf{Nome do(a) avaliador(a) 2}\\UNIVERSIDADE}
+  \begin{center}
+    \imprimirlocal
+    \par
+    \imprimirdata
+  \end{center}
+\end{folhadeaprovacao}
+
+% Elementos opcionais: adapte ou remova conforme as regras do curso.
+% \begin{dedicatoria}
+%   \vspace*{\fill}
+%   \begin{flushright}
+%     Dedico este trabalho a ...
+%   \end{flushright}
+% \end{dedicatoria}
+% \begin{agradecimentos}
+%   Registre aqui os agradecimentos.
+% \end{agradecimentos}
+% \begin{epigrafe}
+%   \vspace*{\fill}
+%   \begin{flushright}
+%     Texto da epígrafe.\\
+%     \textit{Autoria}
+%   \end{flushright}
+% \end{epigrafe}
+
+% O resumo deve ser redigido em parágrafo único; confira extensão e palavras-chave
+% exigidas pelo curso. Substitua o texto de exemplo pelo resumo definitivo.
+\begin{resumo}
+  Este trabalho apresenta um estudo do oscilador harmônico quântico, modelo
+  fundamental para a descrição de sistemas físicos próximos do equilíbrio.
+  São discutidos seu espectro de energia, os estados estacionários e a
+  interpretação física da energia de ponto zero. A solução é obtida pela
+  equação de Schrödinger independente do tempo e comparada com a previsão
+  clássica. O exemplo ilustra como hipóteses, métodos matemáticos e unidades
+  físicas podem ser organizados em um trabalho de Física.
+
+  \vspace{\onelineskip}
+  \noindent\textbf{Palavras-chave}: oscilador harmônico. Mecânica quântica.
+  Equação de Schrödinger.
+\end{resumo}
+
+\begin{resumo}[Abstract]
+  This work presents a study of the quantum harmonic oscillator, a fundamental
+  model for describing physical systems near equilibrium. Its energy spectrum,
+  stationary states, and the physical interpretation of zero-point energy are
+  discussed. The solution is obtained from the time-independent Schrödinger
+  equation and compared with the classical prediction. This example
+  illustrates how assumptions, mathematical methods, and physical units can
+  be organized in a Physics thesis.
+
+  \vspace{\onelineskip}
+  \noindent\textbf{Keywords}: harmonic oscillator. Quantum mechanics.
+  Schrödinger equation.
+\end{resumo}
+
+\pdfbookmark[0]{\listfigurename}{lof}
+\listoffigures*
+\pdfbookmark[0]{\listtablename}{lot}
+\listoftables*
+
+\begin{siglas}
+  \item[ABNT] Associação Brasileira de Normas Técnicas
+  \item[TFB] Trabalho Final de Bacharelado
+\end{siglas}
+
+\begin{simbolos}
+  \item[$\hbar$] constante de Planck reduzida
+  \item[$\hat{H}$] operador Hamiltoniano
+  \item[$\psi$] função de onda
+\end{simbolos}
+
+\pdfbookmark[0]{\contentsname}{toc}
+\tableofcontents*
+\clearpage
+
+\textual
+\hypersetup{pageanchor=true}
+\include{capitulos/01-introducao}
+\include{capitulos/02-fundamentacao}
+\include{capitulos/03-metodologia}
+\include{capitulos/04-resultados}
+\include{capitulos/05-conclusao}
+
+\postextual
+\bibliographystyle{abntex2-num}
+\bibliography{referencias}
+
+\begin{apendicesenv}
+\partapendices
+\include{capitulos/apendice-exemplo}
+\end{apendicesenv}
+
+% Anexos são documentos não elaborados pelo autor. Descomente e crie o arquivo
+% correspondente somente se o trabalho realmente tiver anexos.
+% \begin{anexosenv}
+% \partanexos
+% \include{capitulos/anexo-exemplo}
+% \end{anexosenv}
 
 \end{document}
